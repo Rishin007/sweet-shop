@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 //import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -89,18 +90,18 @@ public ResponseEntity<ErrorDetails> handleResourceNotFoundException3(ListOfSweet
         return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-//    @ExceptionHandler(AccessDeniedException.class)
-//    public ResponseEntity<ErrorDetails> notAllowedException(AccessDeniedException exception,
-//                                                                        WebRequest webRequest){
-//
-//        ErrorDetails errorDetails = new ErrorDetails(
-//                LocalDateTime.now(),
-//                exception.getMessage(),
-//                webRequest.getDescription(false),
-//                "USER_NOT_ALLOWED"
-//        );
-//
-//        return new ResponseEntity<>(errorDetails, HttpStatus.UNAUTHORIZED);
-//    }
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorDetails> notAllowedException(AccessDeniedException exception,
+                                                            WebRequest webRequest){
+
+        ErrorDetails errorDetails = new ErrorDetails(
+                LocalDateTime.now(),
+                exception.getMessage(),
+                webRequest.getDescription(false),
+                "USER_NOT_ALLOWED"
+        );
+
+        return new ResponseEntity<>(errorDetails, HttpStatus.FORBIDDEN);
+    }
 
 }
