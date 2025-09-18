@@ -13,6 +13,7 @@ import java.util.UUID;
 @Table(name = "sweets")
 public class Sweets {
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
     @Column(name = "name")
     private String name;
@@ -24,7 +25,6 @@ public class Sweets {
     private Integer quantity;
 
     public Sweets(String name, String category, Double price, Integer quantity) {
-        this.id = UUID.randomUUID().toString();
         this.name = name;
         this.category = category;
         this.price = price;

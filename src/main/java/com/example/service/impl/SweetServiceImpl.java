@@ -19,11 +19,8 @@ public class SweetServiceImpl implements SweetService {
 
     @Override
     public Optional<SweetsDto> createSweet(SweetsDto sweetsdto) {
-        if(sweetRepo.save(Mapper.SweetsDtoToSweets(sweetsdto)) != null){
-            Sweets sweets = Mapper.SweetsDtoToSweets(sweetsdto);
-            return Optional.of(Mapper.SweetsToSweetsDto(sweets));
-        }
-        return Optional.empty();
+       Sweets sweets = sweetRepo.save(Mapper.SweetsDtoToSweets(sweetsdto));
+       return Optional.of(Mapper.SweetsToSweetsDto(sweets));
     }
 
     @Override
