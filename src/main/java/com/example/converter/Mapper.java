@@ -9,13 +9,6 @@ import com.example.entity.Sweets;
 public class Mapper {
 
     /**
-     * Private constructor to prevent instantiation of this utility class.
-     */
-    private Mapper() {
-        // Hides the public constructor
-    }
-
-    /**
      * Converts a Sweets entity object to a SweetsDto.
      * @param sweets The entity to convert.
      * @return The resulting DTO.

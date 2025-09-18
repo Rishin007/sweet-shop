@@ -15,6 +15,8 @@ import java.util.stream.Collectors;
 
 /**
  * The implementation of the SweetService interface, handling all business logic for sweets.
+ * There were few warnings with the logic that has been removed with the help of AI such as implementing Lambda expression and use of
+ * JAVA STREAM API.
  */
 @Service
 @AllArgsConstructor
@@ -89,14 +91,17 @@ public class SweetServiceImpl implements SweetService {
      */
     @Override
     public Optional<SweetsDto> updateSweet(String id,SweetsDto sweetsDto) {
-        return sweetRepo.findById(id).map(s -> {
+        if(sweetRepo.findById(id).isPresent()){
+            Sweets s= sweetRepo.findById(id).get();
+            s.setId(id);
             s.setName(sweetsDto.getName());
             s.setPrice(sweetsDto.getPrice());
             s.setCategory(sweetsDto.getCategory());
             s.setQuantity(sweetsDto.getQuantity());
-            Sweets updatedSweet = sweetRepo.save(s);
-            return Mapper.SweetsToSweetsDto(updatedSweet);
-        });
+            sweetRepo.save(s);
+            return Optional.of(Mapper.SweetsToSweetsDto(s));
+        }
+        return Optional.empty();
     }
 
     /**
