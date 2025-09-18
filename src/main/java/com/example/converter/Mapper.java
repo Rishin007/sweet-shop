@@ -3,13 +3,34 @@ package com.example.converter;
 import com.example.dto.SweetsDto;
 import com.example.entity.Sweets;
 
+/**
+ * A utility class to map between Sweets entity and its DTO representation.
+ */
 public class Mapper {
+
+    /**
+     * Private constructor to prevent instantiation of this utility class.
+     */
+    private Mapper() {
+        // Hides the public constructor
+    }
+
+    /**
+     * Converts a Sweets entity object to a SweetsDto.
+     * @param sweets The entity to convert.
+     * @return The resulting DTO.
+     */
     public static SweetsDto SweetsToSweetsDto(Sweets sweets){
-        SweetsDto sweetsDto = new SweetsDto(
+        return new SweetsDto(
                 sweets.getId(), sweets.getName(), sweets.getCategory(), sweets.getPrice(), sweets.getQuantity()
         );
-        return sweetsDto;
     }
+
+    /**
+     * Converts a SweetsDto to a Sweets entity object.
+     * @param sweetsDto The DTO to convert.
+     * @return The resulting entity.
+     */
     public static Sweets SweetsDtoToSweets(SweetsDto sweetsDto){
         Sweets sweets = new Sweets();
         sweets.setId(sweetsDto.getId());

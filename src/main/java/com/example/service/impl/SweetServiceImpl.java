@@ -11,83 +11,100 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+/**
+ * The implementation of the SweetService interface, handling all business logic for sweets.
+ */
 @Service
 @AllArgsConstructor
 public class SweetServiceImpl implements SweetService {
     private SweetRepository sweetRepo;
 
+    /**
+     * Creates and saves a new sweet entity from a DTO.
+     */
     @Override
     public Optional<SweetsDto> createSweet(SweetsDto sweetsdto) {
-       Sweets sweets = sweetRepo.save(Mapper.SweetsDtoToSweets(sweetsdto));
-       return Optional.of(Mapper.SweetsToSweetsDto(sweets));
+        Sweets sweets = sweetRepo.save(Mapper.SweetsDtoToSweets(sweetsdto));
+        return Optional.of(Mapper.SweetsToSweetsDto(sweets));
     }
 
+    /**
+     * Retrieves all sweets from the database and converts them to DTOs.
+     */
     @Override
     public Optional<List<SweetsDto>> getAllSweets() {
         List<Sweets> sweets = sweetRepo.findAll();
-        List<SweetsDto> sweetsDto=new ArrayList<>();
-       if(sweetRepo.findAll().size()>0){
-           for(Sweets sd: sweets){
-               sweetsDto.add(Mapper.SweetsToSweetsDto(sd));
-           }
-           return Optional.of(sweetsDto);
-       }
+        if(!sweets.isEmpty()){
+            List<SweetsDto> sweetsDto = sweets.stream()
+                    .map(Mapper::SweetsToSweetsDto)
+                    .collect(Collectors.toList());
+            return Optional.of(sweetsDto);
+        }
         return Optional.empty();
     }
 
+    /**
+     * Finds a single sweet by its name.
+     */
     @Override
     public Optional<SweetsDto> getSweetByName(String name) {
-        if(sweetRepo.findSweetsByName(name) != null){
-            return Optional.of(Mapper.SweetsToSweetsDto(sweetRepo.findSweetsByName(name)));
-        }
-        return Optional.empty();
+        Sweets sweet = sweetRepo.findSweetsByName(name);
+        return (sweet != null) ? Optional.of(Mapper.SweetsToSweetsDto(sweet)) : Optional.empty();
     }
 
+    /**
+     * Finds all sweets that match a given price.
+     */
     @Override
     public Optional<List<SweetsDto>> getSweetByPrice(Double price) {
-        if(sweetRepo.findSweetsByPrice(price) != null) {
-            List<Sweets> sweetsList = sweetRepo.findSweetsByPrice(price);
-            List<SweetsDto> sweetsDto = new ArrayList<>();
-            for (Sweets s : sweetsList) {
-                sweetsDto.add(Mapper.SweetsToSweetsDto(s));
-            }
+        List<Sweets> sweetsList = sweetRepo.findSweetsByPrice(price);
+        if(sweetsList != null && !sweetsList.isEmpty()) {
+            List<SweetsDto> sweetsDto = sweetsList.stream()
+                    .map(Mapper::SweetsToSweetsDto)
+                    .collect(Collectors.toList());
             return Optional.of(sweetsDto);
         }
         return Optional.empty();
     }
 
+    /**
+     * Finds all sweets that belong to a given category.
+     */
     @Override
     public Optional<List<SweetsDto>> getSweetByCategory(String category) {
-        if(sweetRepo.findSweetsByCategory(category)!=null) {
-            List<Sweets> sweetsList = sweetRepo.findSweetsByCategory(category);
-            List<SweetsDto> sweetsDto = new ArrayList<>();
-            for (Sweets s : sweetsList) {
-                sweetsDto.add(Mapper.SweetsToSweetsDto(s));
-            }
+        List<Sweets> sweetsList = sweetRepo.findSweetsByCategory(category);
+        if(sweetsList != null && !sweetsList.isEmpty()) {
+            List<SweetsDto> sweetsDto = sweetsList.stream()
+                    .map(Mapper::SweetsToSweetsDto)
+                    .collect(Collectors.toList());
             return Optional.of(sweetsDto);
         }
         return Optional.empty();
     }
 
+    /**
+     * Updates an existing sweet's data using its ID.
+     */
     @Override
     public Optional<SweetsDto> updateSweet(String id,SweetsDto sweetsDto) {
-        if(sweetRepo.findById(id).isPresent()){
-            Sweets s= sweetRepo.findById(id).get();
-            s.setId(id);
+        return sweetRepo.findById(id).map(s -> {
             s.setName(sweetsDto.getName());
             s.setPrice(sweetsDto.getPrice());
             s.setCategory(sweetsDto.getCategory());
             s.setQuantity(sweetsDto.getQuantity());
-            sweetRepo.save(s);
-            return Optional.of(Mapper.SweetsToSweetsDto(s));
-        }
-        return Optional.empty();
+            Sweets updatedSweet = sweetRepo.save(s);
+            return Mapper.SweetsToSweetsDto(updatedSweet);
+        });
     }
 
+    /**
+     * Deletes a sweet from the database based on its ID.
+     */
     @Override
     public Optional<String> deleteSweetById(String id) {
-        if (sweetRepo.findById(id).isPresent()) {
+        if (sweetRepo.existsById(id)) {
             sweetRepo.deleteById(id);
             return Optional.of("Sweet with id " + id + " has been deleted");
         }
