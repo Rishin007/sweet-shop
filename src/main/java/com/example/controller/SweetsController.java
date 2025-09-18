@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,6 +32,7 @@ public class SweetsController {
      * @throws SweetNotCreatedException if the sweet could not be created.
      */
     @PostMapping
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<SweetsDto> createSweets(@Valid @RequestBody SweetsDto sweetsDto){
         return new ResponseEntity<>(sweetService.createSweet(sweetsDto)
                 .orElseThrow(()-> new SweetNotCreatedException("Sweet")),HttpStatus.CREATED);
@@ -43,6 +45,7 @@ public class SweetsController {
      * @throws ListOfSweetsNotFoundException if no sweets are found.
      */
     @GetMapping
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<List<SweetsDto>> getAllSweets(){
         return new ResponseEntity<>(sweetService.getAllSweets()
                 .orElseThrow(()->new ListOfSweetsNotFoundException("No List of Sweets Found"))
@@ -57,6 +60,7 @@ public class SweetsController {
      * @throws SweetsNotFoundException if no sweet with the given name is found.
      */
     @GetMapping("name/{name}")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<SweetsDto> getAllSweetByName(@PathVariable String name){
         return new ResponseEntity<>(sweetService.getSweetByName(name)
                 .orElseThrow(()->new SweetsNotFoundException("Sweet")),HttpStatus.OK);
@@ -70,6 +74,7 @@ public class SweetsController {
      * @throws SweetsNotFoundException if no sweets are found at the given price.
      */
     @GetMapping("price/{price}")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<List<SweetsDto>> getAllSweetsByPrice(@PathVariable Double price){
         return new ResponseEntity<>(sweetService.getSweetByPrice(price)
                 .orElseThrow(()->new SweetsNotFoundException("Sweets")),HttpStatus.OK);
@@ -83,6 +88,7 @@ public class SweetsController {
      * @throws SweetsNotFoundException if no sweets are found in the given category.
      */
     @GetMapping("category/{category}")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<List<SweetsDto>> getAllSweetsByCategory(@PathVariable String category){
         return new ResponseEntity<>(sweetService.getSweetByCategory(category)
                 .orElseThrow(()->new SweetsNotFoundException("Sweets")),HttpStatus.OK);
@@ -97,6 +103,7 @@ public class SweetsController {
      * @throws SweetsNotFoundException if no sweet with the given ID is found.
      */
     @PutMapping("{id}")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<SweetsDto> updateSweets(@PathVariable String id, @Valid @RequestBody SweetsDto sweetsDto){
         return new ResponseEntity<>(sweetService.updateSweet(id,sweetsDto)
                 .orElseThrow(()-> new SweetsNotFoundException("Sweet","id",id)), HttpStatus.OK);
@@ -110,6 +117,7 @@ public class SweetsController {
      * @throws SweetsNotFoundException if no sweet with the given ID is found.
      */
     @DeleteMapping("{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> deleteSweets(@PathVariable String id){
         return new ResponseEntity<>(sweetService.deleteSweetById(id)
                 .orElseThrow(()-> new SweetsNotFoundException("Sweet","id",id)), HttpStatus.OK);
