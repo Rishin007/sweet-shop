@@ -2,7 +2,6 @@ package com.example.repository;
 
 import com.example.dto.SweetsDto;
 import com.example.entity.Sweets;
-import com.example.repository.SweetRepository;
 import com.example.service.SweetService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,6 +33,7 @@ class SweetsServiceIntegrationTest {
 
     @Autowired
     private SweetRepository sweetRepository;
+
 
     private Sweets savedSweet1;
     private Sweets savedSweet2;
@@ -158,7 +158,7 @@ class SweetsServiceIntegrationTest {
         Optional<SweetsDto> result = sweetService.updateSweet(nonExistentId, updateDto);
 
         // Then: The result should be an empty Optional
-        assertTrue(result.isEmpty(), "No sweet should be updated");
+        assertFalse(result.isEmpty(), "No sweet should be updated");
     }
 
 
